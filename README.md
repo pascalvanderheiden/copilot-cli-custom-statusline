@@ -1,0 +1,122 @@
+# GitHub Copilot CLI custom statusline
+
+This repository shows how to use a custom GitHub Copilot CLI statusline on macOS and Windows.
+
+![Example Copilot CLI statusline](assets/statusline-example.png)
+
+## What it shows
+
+The statusline displays useful context at the bottom of Copilot CLI:
+
+```text
+space hold to record · ↻ 21:57:15 · az: user@example.com · gh: username · tokens<30d: 898.9K · squad: repo · openspec: change 47%
+```
+
+Segments only appear when their related tool or project marker is available.
+
+## Prerequisites
+
+Install the tools for the segments you want to see:
+
+| Segment | Tool |
+| --- | --- |
+| Azure account | [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) |
+| GitHub account | [GitHub CLI](https://cli.github.com/) |
+| Token usage | [AI Engineering Fluency CLI](https://github.com/rajbos/ai-engineering-fluency/blob/main/docs/cli/README.md) |
+| OpenSpec progress | [OpenSpec](https://github.com/Fission-AI/OpenSpec/) |
+| Spec Kit progress | [Spec Kit](https://github.com/github/spec-kit) |
+| Voice recording hint | [Handy](https://github.com/cjpais/Handy) |
+
+macOS users also need `jq` because `statusline.sh` parses Copilot CLI status JSON:
+
+```bash
+brew install jq
+```
+
+Authenticate the CLIs you want to use:
+
+```bash
+az login
+gh auth login
+```
+
+## Step 1: enable the statusline
+
+In GitHub Copilot CLI, run:
+
+```text
+/statusline
+```
+
+Enable the custom statusline when prompted.
+
+## macOS setup
+
+Create the script file:
+
+```bash
+mkdir -p ~/.copilot
+cp statusline.sh ~/.copilot/statusline.sh
+chmod +x ~/.copilot/statusline.sh
+```
+
+Edit `~/.copilot/settings.json` and add:
+
+```json
+"statusLine": {
+  "type": "command",
+  "command": "~/.copilot/statusline.sh"
+}
+```
+
+Verify the script by running it directly:
+
+```bash
+~/.copilot/statusline.sh
+```
+
+## Windows setup
+
+Create the script file:
+
+```powershell
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.copilot"
+Copy-Item .\statusline.ps1 "$env:USERPROFILE\.copilot\statusline.ps1"
+```
+
+Edit `%USERPROFILE%\.copilot\settings.json` and add:
+
+```json
+"statusLine": {
+  "type": "command",
+  "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File %USERPROFILE%\\.copilot\\statusline.ps1"
+}
+```
+
+Verify the script by running it directly:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.copilot\statusline.ps1"
+```
+
+## Segment explanation
+
+| Segment | Meaning |
+| --- | --- |
+| `space hold to record` | Handy voice-recording reminder. |
+| `↻ HH:MM:SS` | Time when the statusline was generated. |
+| `az: ...` | Signed-in Azure CLI account from `az account show`. |
+| `gh: ...` | Active GitHub CLI account from `gh auth status`. |
+| `tokens<30d: ...` | Last 30 days token usage from `ai-engineering-fluency usage`. |
+| `subtasks: ...` | Running Copilot subagents, when Copilot provides that status JSON. |
+| `squad: ...` | Active Squad/AI-team context when `.squad` or `.ai-team` exists in the project. |
+| `openspec: ...` | OpenSpec changes and task completion when `openspec` or `.openspec` exists. |
+| `spec-kit: ...` | Spec Kit state or task completion when `.specify` or `specs/` exists. |
+
+## Troubleshooting
+
+- If a segment is missing, install or authenticate the related CLI.
+- If the statusline does not load on macOS, check `chmod +x ~/.copilot/statusline.sh`.
+- If Windows blocks the script, keep the documented `-ExecutionPolicy Bypass` command or allow local scripts in PowerShell.
+- If `settings.json` stops loading, validate that commas around the `statusLine` block are correct.
+- Restart Copilot CLI after changing the script or settings.
