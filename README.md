@@ -20,6 +20,7 @@ Install the tools and dependencies for the segments you want to see:
 
 | Segment | Tool | Install |
 | --- | --- | --- |
+| Statusline support | [GitHub Copilot CLI](https://docs.github.com/en/copilot/concepts/agents/about-copilot-cli) | `brew install --cask copilot-cli` |
 | Azure account | [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) | `brew install azure-cli` |
 | GitHub account | [GitHub CLI](https://cli.github.com/) | `brew install gh` |
 | Token usage | [AI Engineering Fluency CLI](https://github.com/rajbos/ai-engineering-fluency/blob/main/docs/cli/README.md) | `npm install -g @rajbos/ai-engineering-fluency` |
@@ -62,12 +63,15 @@ curl -fsSL https://raw.githubusercontent.com/pascalvanderheiden/copilot-cli-cust
 chmod +x ~/.copilot/statusline.sh
 ```
 
-Edit `~/.copilot/settings.json` and add:
+Edit `~/.copilot/settings.json` and add or merge:
 
 ```json
-"statusLine": {
-  "type": "command",
-  "command": "~/.copilot/statusline.sh"
+{
+  "experimental": true,
+  "statusLine": {
+    "type": "command",
+    "command": "~/.copilot/statusline.sh"
+  }
 }
 ```
 
@@ -94,5 +98,6 @@ Verify the script by running it directly:
 
 - If a segment is missing, install or authenticate the related CLI.
 - If the statusline does not load, check `chmod +x ~/.copilot/statusline.sh`.
+- If `~` is not expanded in `settings.json`, use the full path, for example `/Users/your-user/.copilot/statusline.sh`.
 - If `settings.json` stops loading, validate that commas around the `statusLine` block are correct.
 - Restart Copilot CLI after changing the script or settings.
