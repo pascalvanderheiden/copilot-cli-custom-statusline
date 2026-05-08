@@ -52,22 +52,13 @@ In GitHub Copilot CLI, run:
 
 Enable the custom statusline when prompted.
 
-## Step 2: clone this repository
-
-Clone this repository so you have the `statusline.sh` and `statusline.ps1` files locally:
-
-```bash
-git clone https://github.com/pascalvanderheiden/copilot-cli-custom-statusline.git
-cd copilot-cli-custom-statusline
-```
-
 ## macOS setup
 
-Create the script file:
+Download the script file:
 
 ```bash
 mkdir -p ~/.copilot
-cp statusline.sh ~/.copilot/statusline.sh
+curl -fsSL https://raw.githubusercontent.com/pascalvanderheiden/copilot-cli-custom-statusline/main/statusline.sh -o ~/.copilot/statusline.sh
 chmod +x ~/.copilot/statusline.sh
 ```
 
@@ -88,12 +79,14 @@ Verify the script by running it directly:
 
 ## Windows setup
 
-Create the script file:
+Download the script file:
 
 ```powershell
 $copilotDir = Join-Path $HOME '.copilot'
 New-Item -ItemType Directory -Force $copilotDir
-Copy-Item .\statusline.ps1 (Join-Path $copilotDir 'statusline.ps1')
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/pascalvanderheiden/copilot-cli-custom-statusline/main/statusline.ps1' `
+  -OutFile (Join-Path $copilotDir 'statusline.ps1')
 ```
 
 Edit `$HOME\.copilot\settings.json` and add:
