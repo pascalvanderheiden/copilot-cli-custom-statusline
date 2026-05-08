@@ -9,7 +9,7 @@ This repository shows how to use a custom GitHub Copilot CLI statusline on macOS
 The statusline displays useful context at the bottom of Copilot CLI:
 
 ```text
-space hold to record · ↻ 21:57:15 · az: user@example.com · gh: username · tokens<30d: 898.9K · squad: repo · openspec: change 47%
+option+space to record · ↻ 21:57:15 · az: user@example.com · gh: username · tokens<30d: 898.9K · squad: repo · openspec: change 47%
 ```
 
 Segments only appear when their related tool or project marker is available.
@@ -18,14 +18,14 @@ Segments only appear when their related tool or project marker is available.
 
 Install the tools for the segments you want to see:
 
-| Segment | Tool |
-| --- | --- |
-| Azure account | [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) |
-| GitHub account | [GitHub CLI](https://cli.github.com/) |
-| Token usage | [AI Engineering Fluency CLI](https://github.com/rajbos/ai-engineering-fluency/blob/main/docs/cli/README.md) |
-| OpenSpec progress | [OpenSpec](https://github.com/Fission-AI/OpenSpec/) |
-| Spec Kit progress | [Spec Kit](https://github.com/github/spec-kit) |
-| Voice recording hint | [Handy](https://github.com/cjpais/Handy) |
+| Segment | Tool | Windows | Mac |
+| --- | --- | --- | --- |
+| Azure account | [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) | `winget install --id Microsoft.AzureCLI` | `brew install azure-cli` |
+| GitHub account | [GitHub CLI](https://cli.github.com/) | `winget install --id GitHub.cli` | `brew install gh` |
+| Token usage | [AI Engineering Fluency CLI](https://github.com/rajbos/ai-engineering-fluency/blob/main/docs/cli/README.md) | `npm install -g @rajbos/ai-engineering-fluency` | `npm install -g @rajbos/ai-engineering-fluency` |
+| OpenSpec progress | [OpenSpec](https://github.com/Fission-AI/OpenSpec/) | `npm install -g @fission-ai/openspec@latest` | `npm install -g @fission-ai/openspec@latest` |
+| Spec Kit progress | [Spec Kit](https://github.com/github/spec-kit) | `uv tool install specify-cli --from git+https://github.com/github/spec-kit.git` | `brew install uv && uv tool install specify-cli --from git+https://github.com/github/spec-kit.git` |
+| Voice recording hint | [Handy](https://github.com/cjpais/Handy) | `winget install --id cjpais.Handy` | `brew install --cask handy` |
 
 macOS users also need `jq` because `statusline.sh` parses Copilot CLI status JSON:
 
@@ -103,7 +103,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.copil
 
 | Segment | Meaning |
 | --- | --- |
-| `space hold to record` | Handy voice-recording reminder. |
+| `option+space to record` / `ctrl+space to record` | Handy voice-recording shortcut reminder (macOS / Windows defaults). |
 | `↻ HH:MM:SS` | Time when the statusline was generated. |
 | `az: ...` | Signed-in Azure CLI account from `az account show`. |
 | `gh: ...` | Active GitHub CLI account from `gh auth status`. |

@@ -6,7 +6,7 @@ else
   status_json="$(cat 2>/dev/null || true)"
 fi
 
-handy_hint="space hold to record"
+handy_hint="option+space to record"
 cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/copilot-statusline"
 esc="$(printf '\033')"
 reset="${esc}[0m"

@@ -7,7 +7,7 @@ if ([Console]::IsInputRedirected) {
     }
 }
 
-$handyHint = 'space hold to record'
+$handyHint = 'ctrl+space to record'
 $localAppData = [Environment]::GetFolderPath('LocalApplicationData')
 if ([string]::IsNullOrWhiteSpace($localAppData)) {
     $localAppData = Join-Path $HOME '.cache'
