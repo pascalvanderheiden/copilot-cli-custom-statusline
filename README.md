@@ -16,15 +16,17 @@ Segments only appear when their related tool or project marker is available.
 
 ## Prerequisites
 
-Install the tools for the segments you want to see:
+Install the tools and dependencies for the segments you want to see:
 
 | Segment | Tool | Windows | Mac |
 | --- | --- | --- | --- |
 | Azure account | [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) | `winget install --id Microsoft.AzureCLI` | `brew install azure-cli` |
 | GitHub account | [GitHub CLI](https://cli.github.com/) | `winget install --id GitHub.cli` | `brew install gh` |
 | Token usage | [AI Engineering Fluency CLI](https://github.com/rajbos/ai-engineering-fluency/blob/main/docs/cli/README.md) | `npm install -g @rajbos/ai-engineering-fluency` | `npm install -g @rajbos/ai-engineering-fluency` |
+| Spec Kit dependency | [uv](https://docs.astral.sh/uv/) | `winget install --id astral-sh.uv` | `brew install uv` |
 | OpenSpec progress | [OpenSpec](https://github.com/Fission-AI/OpenSpec/) | `npm install -g @fission-ai/openspec@latest` | `npm install -g @fission-ai/openspec@latest` |
-| Spec Kit progress | [Spec Kit](https://github.com/github/spec-kit) | `uv tool install specify-cli --from git+https://github.com/github/spec-kit.git` | `brew install uv && uv tool install specify-cli --from git+https://github.com/github/spec-kit.git` |
+| Spec Kit progress | [Spec Kit](https://github.com/github/spec-kit) | `uv tool install specify-cli --from git+https://github.com/github/spec-kit.git` | `uv tool install specify-cli --from git+https://github.com/github/spec-kit.git` |
+| Squad context | [Squad CLI](https://www.npmjs.com/package/@bradygaster/squad-cli) | `npm install -g @bradygaster/squad-cli` | `npm install -g @bradygaster/squad-cli` |
 | Voice recording hint | [Handy](https://github.com/cjpais/Handy) | `winget install --id cjpais.Handy` | `brew install --cask handy` |
 
 macOS users also need `jq` because `statusline.sh` parses Copilot CLI status JSON:
@@ -108,7 +110,6 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.copil
 | `az: ...` | Signed-in Azure CLI account from `az account show`. |
 | `gh: ...` | Active GitHub CLI account from `gh auth status`. |
 | `tokens<30d: ...` | Last 30 days token usage from `ai-engineering-fluency usage`. |
-| `subtasks: ...` | Running Copilot subagents, when Copilot provides that status JSON. |
 | `squad: ...` | Active Squad/AI-team context when `.squad` or `.ai-team` exists in the project. |
 | `openspec: ...` | OpenSpec changes and task completion when `openspec` or `.openspec` exists. |
 | `spec-kit: ...` | Spec Kit state or task completion when `.specify` or `specs/` exists. |

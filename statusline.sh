@@ -17,7 +17,6 @@ c_handy="${esc}[38;5;196m"
 c_azure="${esc}[38;5;208m"
 c_github="${esc}[38;5;226m"
 c_tokens="${esc}[38;5;201m"
-c_agents="${esc}[38;5;46m"
 c_squad="${esc}[38;5;33m"
 c_openspec="${esc}[38;5;99m"
 c_speckit="${esc}[38;5;129m"
@@ -230,61 +229,6 @@ token_usage_status() {
   printf 'tokens<30d: %s\n' "$tokens"
 }
 
-subtask_status="$(
-  if [ -n "$status_json" ] && command -v jq >/dev/null 2>&1; then
-    printf '%s' "$status_json" | jq -r '
-      def active_state:
-        tostring
-        | ascii_downcase
-        | test("running|starting|pending|queued|in[_ -]?progress|spawning|active");
-
-      def agentish:
-        has("agent_id")
-        or has("agentId")
-        or has("agent_type")
-        or has("agentType")
-        or ((.type? // .kind? // .category? // "" | tostring) | test("agent|subagent|sidekick"; "i"));
-
-      def agent_path($path):
-        $path
-        | map(tostring)
-        | join(".")
-        | test("agent|subagent|sidekick"; "i");
-
-      def short:
-        tostring
-        | if length > 40 then .[0:37] + "..." else . end;
-
-      (
-        [
-        paths(objects) as $path
-        | getpath($path)
-        | select(agentish or agent_path($path))
-        | select((.status? // .state? // .phase? // "active") | active_state)
-        | (
-            .agent_id
-            // .agentId
-            // .id
-            // .name
-            // .title
-            // .description
-            // .agent_type
-            // .agentType
-            // "agent"
-            | short
-          )
-        ]
-        | unique
-        | length
-      ) as $count
-      | if $count == 0 then empty
-        elif $count == 1 then "subtasks: 1 running"
-        else "subtasks: \($count) running"
-        end
-    ' 2>/dev/null || true
-  fi
-)"
-
 squad_status() {
   local root
   root="$(find_up "$project_dir" ".squad" || find_up "$project_dir" ".ai-team" || true)"
@@ -422,7 +366,6 @@ join_segments \
   "$(paint "$c_azure" "$(azure_status)")" \
   "$(paint "$c_github" "$(github_status)")" \
   "$(paint "$c_tokens" "$(token_usage_status)")" \
-  "$(paint "$c_agents" "$subtask_status")" \
   "$(paint "$c_squad" "$(squad_status)")" \
   "$(paint "$c_openspec" "$(openspec_status)")" \
   "$(paint "$c_speckit" "$(speckit_status)")"

@@ -23,7 +23,6 @@ $colors = @{
     Azure = "$esc[38;5;208m"
     GitHub = "$esc[38;5;226m"
     Tokens = "$esc[38;5;201m"
-    Agents = "$esc[38;5;46m"
     Squad = "$esc[38;5;33m"
     OpenSpec = "$esc[38;5;99m"
     SpecKit = "$esc[38;5;129m"
@@ -291,87 +290,6 @@ function Get-TokenUsageStatus {
     return $null
 }
 
-function Get-AgentIdentifier {
-    param([object]$Object)
-
-    foreach ($name in @('agent_id', 'agentId', 'id', 'name', 'title', 'description', 'agent_type', 'agentType')) {
-        $value = Get-PropertyValue $Object $name
-        if ($value -is [string] -and -not [string]::IsNullOrWhiteSpace($value)) {
-            return Short-Text $value 40
-        }
-    }
-
-    return 'agent'
-}
-
-function Find-AgentObjects {
-    param(
-        [object]$Node,
-        [string]$Path = ''
-    )
-
-    $results = @()
-    if ($null -eq $Node) {
-        return $results
-    }
-
-    if ($Node -is [array]) {
-        for ($index = 0; $index -lt $Node.Count; $index++) {
-            $results += Find-AgentObjects $Node[$index] "$Path.$index"
-        }
-        return $results
-    }
-
-    if ($Node -is [pscustomobject]) {
-        $propertyNames = @($Node.PSObject.Properties.Name)
-        $typeValue = @(@('type', 'kind', 'category') | ForEach-Object { Get-PropertyValue $Node $_ }) -join ' '
-        $agentProperties = @(@('agent_id', 'agentId', 'agent_type', 'agentType') | Where-Object { $propertyNames -contains $_ })
-        $looksLikeAgent = $agentProperties.Count -gt 0 -or
-            $typeValue -match 'agent|subagent|sidekick' -or
-            $Path -match 'agent|subagent|sidekick'
-
-        $state = Get-PropertyValue $Node 'status'
-        if ($null -eq $state) {
-            $state = Get-PropertyValue $Node 'state'
-        }
-        if ($null -eq $state) {
-            $state = Get-PropertyValue $Node 'phase'
-        }
-        if ($null -eq $state) {
-            $state = 'active'
-        }
-
-        if ($looksLikeAgent -and "$state".ToLowerInvariant() -match 'running|starting|pending|queued|in[_ -]?progress|spawning|active') {
-            $results += Get-AgentIdentifier $Node
-        }
-
-        foreach ($property in $Node.PSObject.Properties) {
-            $childPath = if ([string]::IsNullOrWhiteSpace($Path)) { $property.Name } else { "$Path.$($property.Name)" }
-            $results += Find-AgentObjects $property.Value $childPath
-        }
-    }
-
-    return $results
-}
-
-function Get-SubtaskStatus {
-    param([object]$Status)
-
-    if ($null -eq $Status) {
-        return $null
-    }
-
-    $agents = @(Find-AgentObjects $Status | Sort-Object -Unique)
-    if ($agents.Count -eq 0) {
-        return $null
-    }
-    if ($agents.Count -eq 1) {
-        return 'subtasks: 1 running'
-    }
-
-    return "subtasks: $($agents.Count) running"
-}
-
 function Get-SquadStatus {
     param([string]$ProjectDirectory)
 
@@ -534,7 +452,6 @@ Join-Segments @(
     Paint $colors.Azure (Get-AzureStatus)
     Paint $colors.GitHub (Get-GitHubStatus)
     Paint $colors.Tokens (Get-TokenUsageStatus)
-    Paint $colors.Agents (Get-SubtaskStatus $statusObject)
     Paint $colors.Squad (Get-SquadStatus $projectDirectory)
     Paint $colors.OpenSpec (Get-OpenSpecStatus $projectDirectory)
     Paint $colors.SpecKit (Get-SpecKitStatus $projectDirectory)
