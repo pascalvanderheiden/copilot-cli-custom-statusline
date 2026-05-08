@@ -16,11 +16,16 @@ Segments only appear when their related tool or project marker is available.
 
 ## Prerequisites
 
+Install [GitHub Copilot CLI](https://docs.github.com/en/copilot/concepts/agents/about-copilot-cli):
+
+```bash
+brew install --cask copilot-cli
+```
+
 Install the tools and dependencies for the segments you want to see:
 
 | Segment | Tool | Install |
 | --- | --- | --- |
-| Statusline support | [GitHub Copilot CLI](https://docs.github.com/en/copilot/concepts/agents/about-copilot-cli) | `brew install --cask copilot-cli` |
 | Azure account | [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) | `brew install azure-cli` |
 | GitHub account | [GitHub CLI](https://cli.github.com/) | `brew install gh` |
 | Token usage | [AI Engineering Fluency CLI](https://github.com/rajbos/ai-engineering-fluency/blob/main/docs/cli/README.md) | `npm install -g @rajbos/ai-engineering-fluency` |
@@ -86,7 +91,7 @@ Verify the script by running it directly:
 | Segment | Meaning |
 | --- | --- |
 | `option+space to record` | Handy voice-recording shortcut reminder. |
-| `↻ HH:MM:SS` | Time when the statusline was generated. |
+| `↻ HH:MM:SS` | Last statusline refresh time. |
 | `az: ...` | Signed-in Azure CLI account from `az account show`. |
 | `gh: ...` | Active GitHub CLI account from `gh auth status`. |
 | `tokens<30d: ...` | Last 30 days token usage from `ai-engineering-fluency usage`. |
