@@ -89,19 +89,49 @@ Invoke-WebRequest `
   -OutFile (Join-Path $copilotDir 'statusline.ps1')
 ```
 
-Edit `$HOME\.copilot\settings.json` and add:
+Create this wrapper file:
+
+```text
+%USERPROFILE%\.copilot\statusline.cmd
+```
+
+Contents:
+
+```bat
+@echo off
+pwsh -NoProfile -ExecutionPolicy Bypass -File "%~dp0statusline.ps1"
+```
+
+Why the wrapper? In testing, Copilot's `statusLine.command` setting was most reliable when it pointed at a command/script path. Putting `pwsh -File ...` directly in the JSON setting can be less reliable on Windows. The wrapper also preserves stdin, which is how Copilot sends the payload.
+
+Edit:
+
+```text
+%USERPROFILE%\.copilot\settings.json
+```
+
+Add or merge this:
 
 ```json
-"statusLine": {
-  "type": "command",
-  "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \"& (Join-Path $HOME '.copilot\\statusline.ps1')\""
+{
+  "statusLine": {
+    "type": "command",
+    "command": "C:\\Users\\YOURUSER\\.copilot\\statusline.cmd",
+    "padding": 1
+  },
+  "feature_flags": {
+    "enabled": [
+      "STATUS_LINE"
+    ]
+  },
+  "experimental": true
 }
 ```
 
 Verify the script by running it directly:
 
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "& (Join-Path $HOME '.copilot\statusline.ps1')"
+```cmd
+%USERPROFILE%\.copilot\statusline.cmd
 ```
 
 ## Segment explanation
