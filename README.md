@@ -113,7 +113,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "& (Join-Path $HOME '
 | `az: ...` | Signed-in Azure CLI account from `az account show`. |
 | `gh: ...` | Active GitHub CLI account from `gh auth status`. |
 | `tokens<30d: ...` | Last 30 days token usage from `ai-engineering-fluency usage`. |
-| `squad: ...` | Active Squad/AI-team context when `.squad` or `.ai-team` exists in the project. |
+| `squad: ...` | Active Squad context when `.squad` exists in the project. |
 | `openspec: ...` | OpenSpec changes and task completion when `openspec` or `.openspec` exists. |
 | `spec-kit: ...` | Spec Kit state or task completion when `.specify` or `specs/` exists. |
 

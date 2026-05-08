@@ -329,9 +329,6 @@ function Get-SquadStatus {
 
     $root = Find-Up $ProjectDirectory '.squad'
     if ([string]::IsNullOrWhiteSpace($root)) {
-        $root = Find-Up $ProjectDirectory '.ai-team'
-    }
-    if ([string]::IsNullOrWhiteSpace($root)) {
         return $null
     }
 

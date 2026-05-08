@@ -270,7 +270,7 @@ token_usage_status() {
 
 squad_status() {
   local root
-  root="$(find_up "$project_dir" ".squad" || find_up "$project_dir" ".ai-team" || true)"
+  root="$(find_up "$project_dir" ".squad" || true)"
   [ -n "$root" ] || return 0
 
   if ! command -v squad >/dev/null 2>&1; then
