@@ -145,6 +145,44 @@ function Invoke-CachedCommand {
     return $output
 }
 
+function Invoke-CachedNativeCommand {
+    param(
+        [string]$Key,
+        [int]$TtlSeconds,
+        [string]$Directory,
+        [string]$FilePath,
+        [string[]]$Arguments
+    )
+
+    New-Item -ItemType Directory -Force $cacheDir | Out-Null
+    $file = Join-Path $cacheDir $Key
+
+    if (Test-Path $file) {
+        $age = (Get-Date) - (Get-Item $file).LastWriteTime
+        if ($age.TotalSeconds -lt $TtlSeconds) {
+            return Get-Content -Raw $file
+        }
+    }
+
+    $previousDirectory = (Get-Location).Path
+    try {
+        Set-Location $Directory
+        $output = (& $FilePath @Arguments 2>$null | Select-Object -First 80 | Out-String).Trim()
+        if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($output)) {
+            Remove-Item -Path $file -ErrorAction SilentlyContinue
+            return $null
+        }
+    } catch {
+        Remove-Item -Path $file -ErrorAction SilentlyContinue
+        return $null
+    } finally {
+        Set-Location $previousDirectory
+    }
+
+    Set-Content -Path $file -Value $output -NoNewline
+    return $output
+}
+
 function Count-Tasks {
     param(
         [string]$TasksFile,
@@ -221,7 +259,7 @@ function Get-ProjectDirectory {
 }
 
 function Get-RefreshStatus {
-    return "↻ $(Get-Date -Format 'HH:mm:ss')"
+    return "refreshed at $(Get-Date -Format 'HH:mm:ss')"
 }
 
 function Get-AzureStatus {
@@ -229,9 +267,7 @@ function Get-AzureStatus {
         return $null
     }
 
-    $output = Invoke-CachedCommand 'azure-account-v3' 60 $HOME {
-        az account show --query 'user.name' -o tsv
-    }
+    $output = Invoke-CachedNativeCommand 'azure-account-v4' 60 $HOME 'az' @('account', 'show', '--query', 'user.name', '-o', 'tsv')
     $user = ($output -split "`r?`n" | Select-Object -First 1).Trim()
 
     if ([string]::IsNullOrWhiteSpace($user)) {
@@ -246,9 +282,7 @@ function Get-GitHubStatus {
         return $null
     }
 
-    $output = Invoke-CachedCommand 'github-auth' 60 $HOME {
-        gh auth status
-    }
+    $output = Invoke-CachedNativeCommand 'github-auth-v2' 60 $HOME 'gh' @('auth', 'status')
 
     $account = $null
     foreach ($line in ($output -split "`r?`n")) {

@@ -78,8 +78,10 @@ cache_key() {
 }
 
 run_with_timeout() {
+  local timeout="${STATUSLINE_COMMAND_TIMEOUT_SECONDS:-5}"
+
   if command -v perl >/dev/null 2>&1; then
-    perl -e 'alarm shift @ARGV; exec @ARGV' 2 "$@"
+    perl -e 'alarm shift @ARGV; exec @ARGV' "$timeout" "$@"
   else
     "$@"
   fi
@@ -113,6 +115,43 @@ cached_command() {
         sed -n '1,80p'
   )" || true
 
+  printf '%s' "$output" >"$file" 2>/dev/null || true
+  printf '%s' "$output"
+}
+
+cached_success_command() {
+  local key="$1"
+  local ttl="$2"
+  local dir="$3"
+  shift 3
+
+  mkdir -p "$cache_dir" 2>/dev/null || true
+  local file="$cache_dir/$key"
+  local now
+  local mtime
+  now="$(date +%s)"
+
+  if [ -s "$file" ]; then
+    mtime="$(file_mtime "$file")"
+    if [ $((now - mtime)) -lt "$ttl" ]; then
+      cat "$file"
+      return 0
+    fi
+  fi
+
+  local output
+  if ! output="$(cd "$dir" 2>/dev/null && run_with_timeout "$@" 2>/dev/null)"; then
+    rm -f "$file" 2>/dev/null || true
+    return 1
+  fi
+
+  output="$(
+    printf '%s' "$output" |
+      tr -d '\r' |
+      sed -n '1,80p'
+  )"
+
+  [ -n "$output" ] || return 1
   printf '%s' "$output" >"$file" 2>/dev/null || true
   printf '%s' "$output"
 }
@@ -179,7 +218,7 @@ azure_status() {
   local output
   local user
 
-  output="$(cached_command azure-account-v3 60 "$HOME" az account show --query "user.name" -o tsv)"
+  output="$(cached_success_command azure-account-v4 60 "$HOME" az account show --query "user.name" -o tsv)" || return 0
   user="$(printf '%s\n' "$output" | sed -n '1p')"
 
   [ -n "$user" ] || return 0
@@ -193,7 +232,7 @@ github_status() {
   local account=""
   local line
 
-  output="$(cached_command github-auth 60 "$HOME" gh auth status)"
+  output="$(cached_success_command github-auth-v2 60 "$HOME" gh auth status)" || return 0
 
   while IFS= read -r line; do
     case "$line" in

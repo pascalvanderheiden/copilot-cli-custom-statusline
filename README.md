@@ -52,6 +52,15 @@ In GitHub Copilot CLI, run:
 
 Enable the custom statusline when prompted.
 
+## Step 2: clone this repository
+
+Clone this repository so you have the `statusline.sh` and `statusline.ps1` files locally:
+
+```bash
+git clone https://github.com/pascalvanderheiden/copilot-cli-custom-statusline.git
+cd copilot-cli-custom-statusline
+```
+
 ## macOS setup
 
 Create the script file:
@@ -82,23 +91,24 @@ Verify the script by running it directly:
 Create the script file:
 
 ```powershell
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.copilot"
-Copy-Item .\statusline.ps1 "$env:USERPROFILE\.copilot\statusline.ps1"
+$copilotDir = Join-Path $HOME '.copilot'
+New-Item -ItemType Directory -Force $copilotDir
+Copy-Item .\statusline.ps1 (Join-Path $copilotDir 'statusline.ps1')
 ```
 
-Edit `%USERPROFILE%\.copilot\settings.json` and add:
+Edit `$HOME\.copilot\settings.json` and add:
 
 ```json
 "statusLine": {
   "type": "command",
-  "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File %USERPROFILE%\\.copilot\\statusline.ps1"
+  "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \"& (Join-Path $HOME '.copilot\\statusline.ps1')\""
 }
 ```
 
 Verify the script by running it directly:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.copilot\statusline.ps1"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "& (Join-Path $HOME '.copilot\statusline.ps1')"
 ```
 
 ## Segment explanation
