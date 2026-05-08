@@ -79,7 +79,7 @@ Verify the script by running it directly:
 
 ## Windows setup
 
-Download the script file:
+Download the script files:
 
 ```powershell
 $copilotDir = Join-Path $HOME '.copilot'
@@ -87,22 +87,12 @@ New-Item -ItemType Directory -Force $copilotDir
 Invoke-WebRequest `
   -Uri 'https://raw.githubusercontent.com/pascalvanderheiden/copilot-cli-custom-statusline/main/statusline.ps1' `
   -OutFile (Join-Path $copilotDir 'statusline.ps1')
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/pascalvanderheiden/copilot-cli-custom-statusline/main/statusline.cmd' `
+  -OutFile (Join-Path $copilotDir 'statusline.cmd')
 ```
 
-Create this wrapper file:
-
-```text
-%USERPROFILE%\.copilot\statusline.cmd
-```
-
-Contents:
-
-```bat
-@echo off
-pwsh -NoProfile -ExecutionPolicy Bypass -File "%~dp0statusline.ps1"
-```
-
-Why the wrapper? In testing, Copilot's `statusLine.command` setting was most reliable when it pointed at a command/script path. Putting `pwsh -File ...` directly in the JSON setting can be less reliable on Windows. The wrapper also preserves stdin, which is how Copilot sends the payload.
+The `statusline.cmd` wrapper is included in this repository. Why the wrapper? In testing, Copilot's `statusLine.command` setting was most reliable when it pointed at a command/script path. Putting `pwsh -File ...` directly in the JSON setting can be less reliable on Windows. The wrapper also preserves stdin, which is how Copilot sends the payload.
 
 Edit:
 
@@ -116,7 +106,7 @@ Add or merge this:
 {
   "statusLine": {
     "type": "command",
-    "command": "C:\\Users\\YOURUSER\\.copilot\\statusline.cmd",
+    "command": "%USERPROFILE%\\.copilot\\statusline.cmd",
     "padding": 1
   },
   "feature_flags": {
@@ -154,3 +144,20 @@ Verify the script by running it directly:
 - If Windows blocks the script, keep the documented `-ExecutionPolicy Bypass` command or allow local scripts in PowerShell.
 - If `settings.json` stops loading, validate that commas around the `statusLine` block are correct.
 - Restart Copilot CLI after changing the script or settings.
+
+### Windows: the line does not show up
+
+Check:
+
+- `STATUS_LINE` is enabled in `feature_flags.enabled`.
+- `statusLine.command` points to the `.cmd` wrapper.
+- You restarted Copilot CLI after changing settings.
+- The command works with the sample payload.
+
+If it works manually but not in Copilot, use the wrapper path in `settings.json`:
+
+```json
+"command": "%USERPROFILE%\\.copilot\\statusline.cmd"
+```
+
+Avoid putting a full command with arguments directly in the setting.
