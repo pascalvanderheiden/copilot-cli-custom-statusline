@@ -105,4 +105,14 @@ For anyone porting their own `.sh` script to PowerShell, watch out for these (th
 
 - **Garbled glyphs.** Verify the `.ps1` has a UTF-8 BOM (`(Get-Content ... -Encoding Byte -TotalCount 3)` should print `239 187 191`).
 - **`pwsh: command not found`** in the wrapper. Either install PowerShell 7 (`winget install Microsoft.PowerShell`) or change `pwsh` to `powershell.exe` in `statusline.cmd`.
+- **`tokens<30d:` segment never appears.** `ai-engineering-fluency usage` takes ~60 s on a cold run, which exceeds Copilot CLI's ~10 s statusline timeout, so the cache is never auto-populated. Pre-warm it once by running the command directly and copying the output into the cache file:
+
+  ```powershell
+  $cache = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'copilot-statusline\ai-fluency-usage-v1'
+  New-Item -ItemType Directory -Force (Split-Path $cache) | Out-Null
+  ai-engineering-fluency usage | Out-String |
+      ForEach-Object { [System.IO.File]::WriteAllText($cache, $_, [System.Text.UTF8Encoding]::new($false)) }
+  ```
+
+  After that, the script refreshes the cache transparently every 30 minutes. Note the cache directory is `%LOCALAPPDATA%\copilot-statusline\` (not `~/.cache/...` like on macOS) — that is what `[Environment]::GetFolderPath('LocalApplicationData')` resolves to on Windows.
 - **Logs.** Copilot CLI writes to `%USERPROFILE%\.copilot\logs\`. Statusline-spawning failures do **not** appear there on Windows — they are silent. Use the static-statusline trick above to bisect.

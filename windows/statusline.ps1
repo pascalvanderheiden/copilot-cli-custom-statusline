@@ -135,7 +135,12 @@ function Invoke-CachedCommand {
     $previousDirectory = (Get-Location).Path
     try {
         Set-Location $Directory
-        $output = (& $Command 2>&1 | Select-Object -First 80 | Out-String).Trim()
+        # Drop ai-engineering-fluency progress lines ("Processing: N/M files")
+        # so the truncation that follows keeps the actual report.
+        $output = (& $Command 2>&1 |
+            Where-Object { $_ -notmatch '^Processing: \d+/\d+ files' } |
+            Select-Object -First 200 |
+            Out-String).Trim()
     } catch {
         $output = ''
     } finally {
@@ -273,7 +278,7 @@ function Get-TokenUsageStatus {
         return $null
     }
 
-    $output = Invoke-CachedCommand 'ai-fluency-usage-v1' 300 $HOME {
+    $output = Invoke-CachedCommand 'ai-fluency-usage-v1' 1800 $HOME {
         ai-engineering-fluency usage
     }
 
