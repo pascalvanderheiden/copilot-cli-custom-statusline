@@ -57,17 +57,17 @@ It produces the same kind of output as the macOS version, for example:
 
 3. In Copilot CLI, run `/statusline` and pick **Custom**, then `/restart`.
 
-## The hidden Windows blocker
+## What made the spawn work on Windows
 
-A clean PowerShell port that runs perfectly in standalone tests will still produce **no output at all** in Copilot CLI on Windows unless you do these two things:
+On Windows + Copilot CLI 1.0.44, a clean PowerShell port that ran perfectly in standalone tests produced **no output at all** in the CLI — no error, no entry in `~/.copilot/logs/`, just a blank statusline. Two changes together fixed it. We did not isolate which one is strictly required, so both are documented here:
 
 ### 1. Add `feature_flags.enabled: ["STATUS_LINE"]` to `settings.json`
 
-This is the single most important Windows fix. Without this entry the CLI silently refuses to spawn the command — no error, no log line, nothing in `~/.copilot/logs/`. `experimental: true` alone is not enough on Windows. (`type: "static"` works regardless, which is a useful test: if a literal static string renders but a command does not, you are missing this flag.)
+`experimental: true` alone was not enough in our setup. Adding the explicit feature flag was part of the change that made `statusLine.type: "command"` start spawning. As a quick sanity check, `type: "static"` always renders regardless: if a literal static string shows but a command does not, the spawn path itself is the problem.
 
 ### 2. Use a `.cmd` wrapper instead of an inline `powershell.exe -File ...`
 
-Putting the interpreter, flags, and script path inline in the JSON `command` field is unreliable on Windows because of how the spawned process parses arguments and stdin redirection. A two-line `.cmd` wrapper sidesteps both problems and preserves the JSON payload Copilot CLI pipes to stdin.
+A two-line `.cmd` wrapper that calls `pwsh -File ...` is more reliable on Windows than putting the interpreter, flags, and script path directly in the JSON `command` field — argument parsing and stdin redirection both behave better. This recommendation also matches Scott Hanselman's [Copilot CLI Oh My Posh statusline gist](https://gist.github.com/shanselman/9623ac74888a07ba82f63f5310fda11b).
 
 ## PowerShell port traps that bite
 
