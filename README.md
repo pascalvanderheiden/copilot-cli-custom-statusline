@@ -2,6 +2,8 @@
 
 This repository shows how to use a custom GitHub Copilot CLI statusline on macOS.
 
+> **Windows users:** see [`windows/`](windows/README.md) for a PowerShell port and the Windows-specific setup (notably the `feature_flags.enabled: ["STATUS_LINE"]` requirement and the `.cmd` wrapper).
+
 ![Example Copilot CLI statusline](assets/statusline-example.png)
 
 ## What it shows
