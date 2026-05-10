@@ -116,3 +116,9 @@ For anyone porting their own `.sh` script to PowerShell, watch out for these (th
 
   After that, the script refreshes the cache transparently every 30 minutes. Note the cache directory is `%LOCALAPPDATA%\copilot-statusline\` (not `~/.cache/...` like on macOS) — that is what `[Environment]::GetFolderPath('LocalApplicationData')` resolves to on Windows.
 - **Logs.** Copilot CLI writes to `%USERPROFILE%\.copilot\logs\`. Statusline-spawning failures do **not** appear there on Windows — they are silent. Use the static-statusline trick above to bisect.
+
+## Credits
+
+- [@Remc0000](https://github.com/Remc0000) — Windows port (this folder). Without his fight with `pwsh`, `cmd.exe`, `%LOCALAPPDATA%`, UTF-8 BOMs, hidden feature flags, and silent spawn failures, nobody could ever use this on Windows.
+- [@shanselman](https://github.com/shanselman) — the [`.cmd` wrapper / `feature_flags` tip](https://gist.github.com/shanselman/9623ac74888a07ba82f63f5310fda11b) that unblocked the spawn path.
+- [@pascalvanderheiden](https://github.com/pascalvanderheiden) — the original macOS `statusline.sh` this port is based on.
