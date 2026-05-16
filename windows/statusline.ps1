@@ -27,6 +27,7 @@ $colors = @{
     Squad = "$esc[38;5;33m"
     OpenSpec = "$esc[38;5;99m"
     SpecKit = "$esc[38;5;129m"
+    Colima = "$esc[38;5;201m"
 }
 
 function Get-PropertyValue {
@@ -244,6 +245,10 @@ function Get-AzureStatus {
         return $null
     }
 
+    if ($user -match '@') {
+        $user = '@' + ($user -split '@', 2)[1]
+    }
+
     return "az: $(Short-Text $user 32)"
 }
 
@@ -388,25 +393,7 @@ function Get-SquadStatus {
         return $null
     }
 
-    if (-not (Get-Command squad -ErrorAction SilentlyContinue)) {
-        return 'squad: active'
-    }
-
-    $key = Get-CacheKey 'squad' $root
-    $output = Invoke-CachedCommand $key 0 $root {
-        squad status
-    }
-
-    foreach ($line in ($output -split "`r?`n")) {
-        if ($line -match 'Active squad:\s*(.+)$') {
-            $active = $Matches[1].Trim()
-            if (-not [string]::IsNullOrWhiteSpace($active) -and $active -ne 'none') {
-                return "squad: $active"
-            }
-        }
-    }
-
-    return 'squad: active'
+    return 'squad'
 }
 
 function Get-OpenSpecStatus {
@@ -522,6 +509,25 @@ function Get-SpecKitStatus {
     return 'spec-kit: active'
 }
 
+function Get-ColimaStatus {
+    if (-not (Get-Command colima -ErrorAction SilentlyContinue)) {
+        return $null
+    }
+
+    $output = Invoke-CachedCommand 'colima-list-v1' 30 $HOME {
+        colima list -j
+    }
+
+    $lines = @($output -split "`r?`n" | Where-Object { $_ -match '^\{' })
+    $total = $lines.Count
+    if ($total -le 0) {
+        return $null
+    }
+
+    $running = @($lines | Where-Object { $_ -match '"status":"Running"' }).Count
+    return "colima: $running/$total"
+}
+
 $statusObject = $null
 if (-not [string]::IsNullOrWhiteSpace($statusJson)) {
     try {
@@ -543,4 +549,5 @@ Join-Segments @(
     Paint $colors.Squad (Get-SquadStatus $projectDirectory)
     Paint $colors.OpenSpec (Get-OpenSpecStatus $projectDirectory)
     Paint $colors.SpecKit (Get-SpecKitStatus $projectDirectory)
+    Paint $colors.Colima (Get-ColimaStatus)
 )

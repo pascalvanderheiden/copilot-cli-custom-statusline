@@ -16,10 +16,11 @@ c_refresh="${dim}"
 c_handy="${esc}[38;5;196m"
 c_azure="${esc}[38;5;208m"
 c_github="${esc}[38;5;226m"
-c_tokens="${esc}[38;5;201m"
+c_tokens="${esc}[38;5;40m"
 c_squad="${esc}[38;5;33m"
 c_openspec="${esc}[38;5;99m"
 c_speckit="${esc}[38;5;129m"
+c_colima="${esc}[38;5;201m"
 
 project_dir="$PWD"
 if [ -n "$status_json" ] && command -v jq >/dev/null 2>&1; then
@@ -222,6 +223,9 @@ azure_status() {
   user="$(printf '%s\n' "$output" | sed -n '1p')"
 
   [ -n "$user" ] || return 0
+  case "$user" in
+    *@*) user="@${user#*@}" ;;
+  esac
   printf 'az: %s\n' "$(short_text "$user" 32)"
 }
 
@@ -273,24 +277,7 @@ squad_status() {
   root="$(find_up "$project_dir" ".squad" || true)"
   [ -n "$root" ] || return 0
 
-  if ! command -v squad >/dev/null 2>&1; then
-    printf 'squad: active\n'
-    return 0
-  fi
-
-  local output
-  local active
-  output="$(cached_command "$(cache_key squad "$root")" 0 "$root" squad status)"
-  active="$(
-    printf '%s\n' "$output" |
-      awk -F: '/Active squad:/ {gsub(/^[ \t]+|[ \t]+$/, "", $2); print $2; exit}'
-  )"
-
-  if [ -n "$active" ] && [ "$active" != "none" ]; then
-    printf 'squad: %s\n' "$active"
-  else
-    printf 'squad: active\n'
-  fi
+  printf 'squad\n'
 }
 
 openspec_status() {
@@ -383,6 +370,18 @@ speckit_status() {
   printf 'spec-kit: active\n'
 }
 
+colima_status() {
+  command -v colima >/dev/null 2>&1 || return 0
+
+  local output total running
+  output="$(cached_command colima-list-v1 30 "$HOME" colima list -j)"
+  total="$(printf '%s\n' "$output" | grep -c '^{')"
+  [ "${total:-0}" -gt 0 ] || return 0
+  running="$(printf '%s\n' "$output" | grep -c '"status":"Running"')"
+
+  printf 'colima: %s/%s\n' "${running:-0}" "$total"
+}
+
 join_segments() {
   local output=""
   local segment
@@ -407,4 +406,5 @@ join_segments \
   "$(paint "$c_tokens" "$(token_usage_status)")" \
   "$(paint "$c_squad" "$(squad_status)")" \
   "$(paint "$c_openspec" "$(openspec_status)")" \
-  "$(paint "$c_speckit" "$(speckit_status)")"
+  "$(paint "$c_speckit" "$(speckit_status)")" \
+  "$(paint "$c_colima" "$(colima_status)")"

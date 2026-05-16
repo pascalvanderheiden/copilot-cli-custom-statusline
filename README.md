@@ -11,7 +11,7 @@ This repository shows how to use a custom GitHub Copilot CLI statusline on macOS
 The statusline displays useful context at the bottom of Copilot CLI:
 
 ```text
-option+space to record · ↻ 21:57:15 · az: user@example.com · gh: username · tokens<30d: 898.9K · squad: repo · openspec: change 47%
+option+space to record · ↻ 21:57:15 · az: @example.com · gh: username · tokens<30d: 898.9K · squad · openspec: change 47% · colima: 1/2
 ```
 
 Segments only appear when their related tool or project marker is available.
@@ -36,6 +36,7 @@ Install the tools and dependencies for the segments you want to see:
 | Spec Kit progress | [Spec Kit](https://github.com/github/spec-kit) | `uv tool install specify-cli --from git+https://github.com/github/spec-kit.git` |
 | Squad context | [Squad CLI](https://www.npmjs.com/package/@bradygaster/squad-cli) | `npm install -g @bradygaster/squad-cli` |
 | Voice recording hint | [Handy](https://github.com/cjpais/Handy) | `brew install --cask handy` |
+| Colima containers | [Colima](https://github.com/abiosoft/colima) | `brew install colima` |
 
 You also need `jq` because `statusline.sh` parses Copilot CLI status JSON:
 
@@ -97,9 +98,10 @@ Verify the script by running it directly:
 | `az: ...` | Signed-in Azure CLI account from `az account show`. |
 | `gh: ...` | Active GitHub CLI account from `gh auth status`. |
 | `tokens<30d: ...` | Last 30 days token usage from `ai-engineering-fluency usage`. |
-| `squad: ...` | Active Squad context when `.squad` exists in the project. |
+| `squad` | Indicator that a Squad context is initialized when `.squad` exists in the project. |
 | `openspec: ...` | OpenSpec changes and task completion when `openspec` or `.openspec` exists. |
 | `spec-kit: ...` | Spec Kit state or task completion when `.specify` or `specs/` exists. |
+| `colima: R/T` | Number of running (`R`) Colima instances out of total (`T`) from `colima list`. |
 
 ## Troubleshooting
 

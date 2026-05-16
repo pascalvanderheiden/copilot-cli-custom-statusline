@@ -5,7 +5,7 @@ This folder contains a Windows port of `statusline.sh` for [GitHub Copilot CLI](
 It produces the same kind of output as the macOS version, for example:
 
 ```text
-↻ 16:17:11 · ctx: 42.1k/200k ██░░░░░░░░ 21% · az: user@example.com · gh: username · squad: repo · spec-kit: active
+↻ 16:17:11 · ctx: 42.1k/200k ██░░░░░░░░ 21% · az: @example.com · gh: username · squad · spec-kit: active
 ```
 
 ## Why a separate Windows port?
