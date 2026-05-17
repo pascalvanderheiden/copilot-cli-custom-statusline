@@ -91,17 +91,17 @@ Verify the script by running it directly:
 
 ## Segment explanation
 
-| Segment | Meaning |
-| --- | --- |
-| `option+space to record` | Handy voice-recording shortcut reminder. |
-| `↻ HH:MM:SS` | Last statusline refresh time. |
-| `az: ...` | Signed-in Azure CLI account from `az account show`. |
-| `gh: ...` | Active GitHub CLI account from `gh auth status`. |
-| `tokens<30d: ...` | Last 30 days token usage from `ai-engineering-fluency usage`. |
-| `squad` | Indicator that a Squad context is initialized when `.squad` exists in the project. |
-| `openspec: ...` | OpenSpec changes and task completion when `openspec` or `.openspec` exists. |
-| `spec-kit: ...` | Spec Kit state or task completion when `.specify` or `specs/` exists. |
-| `colima: R/T` | Number of running (`R`) Colima instances out of total (`T`) from `colima list`. |
+| Segment | Color | Meaning |
+| --- | --- | --- |
+| `option+space to record` | ![#ff0000](https://placehold.co/12x12/ff0000/ff0000.png) `#ff0000` | Handy voice-recording shortcut reminder. |
+| `↻ HH:MM:SS` | ![#8b949e](https://placehold.co/12x12/8b949e/8b949e.png) `dim` | Last statusline refresh time. |
+| `az: ...` | ![#ff8700](https://placehold.co/12x12/ff8700/ff8700.png) `#ff8700` | Signed-in Azure CLI account from `az account show`. |
+| `gh: ...` | ![#ffff00](https://placehold.co/12x12/ffff00/ffff00.png) `#ffff00` | Active GitHub CLI account from `gh auth status`. |
+| `tokens<30d: ...` | ![#00d700](https://placehold.co/12x12/00d700/00d700.png) `#00d700` | Last 30 days token usage from `ai-engineering-fluency usage`. |
+| `squad` | ![#0087ff](https://placehold.co/12x12/0087ff/0087ff.png) `#0087ff` | Indicator that a Squad context is initialized when `.squad` exists in the project. |
+| `openspec: ...` | ![#875fff](https://placehold.co/12x12/875fff/875fff.png) `#875fff` | OpenSpec changes and task completion when `openspec` or `.openspec` exists. |
+| `spec-kit: ...` | ![#af00ff](https://placehold.co/12x12/af00ff/af00ff.png) `#af00ff` | Spec Kit state or task completion when `.specify` or `specs/` exists. |
+| `colima: R/T` | ![#ff00ff](https://placehold.co/12x12/ff00ff/ff00ff.png) `#ff00ff` | Number of running (`R`) Colima instances out of total (`T`) from `colima list`. |
 
 ## Troubleshooting
 
