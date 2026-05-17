@@ -4,14 +4,14 @@ This repository shows how to use a custom GitHub Copilot CLI statusline on macOS
 
 > **Windows users:** see [`windows/`](windows/README.md) for a PowerShell port and the Windows-specific setup (notably the `feature_flags.enabled: ["STATUS_LINE"]` requirement and the `.cmd` wrapper).
 
-![Example Copilot CLI statusline](assets/statusline-example.png)
+![Example Copilot CLI statusline](assets/statusline-example.svg)
 
 ## What it shows
 
 The statusline displays useful context at the bottom of Copilot CLI:
 
 ```text
-option+space to record · ↻ 21:57:15 · az: @example.com · gh: username · tokens<30d: 898.9K · squad · openspec: change 47% · colima: 1/2
+option+space to record · ↻ 21:57:15 · az: @example.com · gh: username · tokens<30d: 898.9K · squad · openspec: change 47% · spec-kit: feature 3/8 · colima: 1/2
 ```
 
 Segments only appear when their related tool or project marker is available.

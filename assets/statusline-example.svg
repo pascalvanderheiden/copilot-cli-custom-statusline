@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 60" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">
+  <style>
+    .bg { fill: #0d1117; }
+    .sep { fill: #6e7681; }
+    .handy { fill: #ff0000; }
+    .refresh { fill: #8b949e; }
+    .azure { fill: #ff8700; }
+    .github { fill: #ffff00; }
+    .tokens { fill: #00d700; }
+    .squad { fill: #0087ff; }
+    .openspec { fill: #875fff; }
+    .speckit { fill: #af00ff; }
+    .colima { fill: #ff00ff; }
+  </style>
+  <rect class="bg" width="1180" height="60" rx="6"/>
+  <text x="14" y="36" xml:space="preserve"><tspan class="handy">option+space to record</tspan><tspan class="sep"> · </tspan><tspan class="refresh">↻ 21:57:15</tspan><tspan class="sep"> · </tspan><tspan class="azure">az: @example.com</tspan><tspan class="sep"> · </tspan><tspan class="github">gh: username</tspan><tspan class="sep"> · </tspan><tspan class="tokens">tokens&lt;30d: 898.9K</tspan><tspan class="sep"> · </tspan><tspan class="squad">squad</tspan><tspan class="sep"> · </tspan><tspan class="openspec">openspec: change 47%</tspan><tspan class="sep"> · </tspan><tspan class="speckit">spec-kit: feature 3/8</tspan><tspan class="sep"> · </tspan><tspan class="colima">colima: 1/2</tspan></text>
+</svg>
